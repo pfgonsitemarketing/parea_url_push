@@ -91,7 +91,20 @@ if st.button("URL generieren"):
             query += "&" + tracking_encoded
 
         parsed_base = urlparse(base_url)
-        final_url = urlunparse(parsed_base._replace(query=query))
+        existing_query = parsed_base.query
+        new_query = urlencode(params, quote_via=quote)
+        tracking_encoded = quote(tracking.strip(), safe="")
+        
+        if tracking_encoded:
+            new_query += "&" + tracking_encoded
+        
+        if existing_query:
+            combined_query = existing_query + "&" + new_query
+        else:
+            combined_query = new_query
+        
+        # finale URL bauen
+        final_url = urlunparse(parsed_base._replace(query=combined_query))
 
         st.success("URL erfolgreich generiert ✅")
         st.text_area("Fertige URL", final_url, height=150)
