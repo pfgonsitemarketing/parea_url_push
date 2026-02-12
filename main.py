@@ -98,10 +98,10 @@ preselected = st.radio("Preselected", ["0", "1"], format_func=lambda x: "Inactiv
 # ---------------------------------
 # URL generieren
 # ---------------------------------
-if st.button("URL generieren"):
+if st.button("Generate URL"):
 
     if not all([base_url, title, cta, target_url]):
-        st.error("Bitte alle Pflichtfelder ausfüllen.")
+        st.error("Please fill in all required fields.")
     else:
 
         parsed_target = urlparse(target_url)
@@ -145,7 +145,7 @@ if st.button("URL generieren"):
         # finale URL bauen
         final_url = urlunparse(parsed_base._replace(query=combined_query))
 
-        st.success("URL erfolgreich generiert ✅")
-        st.text_area("Fertige URL", final_url, height=150)
+        st.success("URL successfully generated ✅")
+        st.text_area("Final URL", final_url, height=150)
 
         st.code(final_url)
