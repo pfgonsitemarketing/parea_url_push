@@ -63,37 +63,37 @@ st.title("🔗 PromoArea Dynamic Promo Generator")
 # Basisfelder
 # ---------------------------------
 selected_shop = st.selectbox("Shop", list(basis_links.keys()))
-base_url = st.text_input("Basis-URL", value=basis_links[selected_shop])
+base_url = st.text_input("Main-URL (opens when called)", value=basis_links[selected_shop])
 
 title = st.text_input("Title *")
 claim = st.text_input("Claim")
 cta = st.text_input("CTA *")
 code = st.text_input("Code")
-target_url = st.text_input("Ziel-URL *")
+target_url = st.text_input("Target-URL (opens after clicking on promotion) *")
 tracking = st.text_input("Tracking")
 
 # ---------------------------------
 # Datum & Uhrzeit
 # ---------------------------------
-st.subheader("Datum & Uhrzeit (todate)")
+st.subheader("To Date (promotion valid until)")
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    selected_date = st.date_input("Datum", value=date.today())
+    selected_date = st.date_input("Date", value=date.today())
 
 with col2:
-    selected_hour = st.number_input("Stunde", min_value=0, max_value=23, value=datetime.now().hour)
+    selected_hour = st.number_input("Hour", min_value=0, max_value=23, value=datetime.now().hour)
 
 with col3:
-    selected_minute = st.number_input("Minute", min_value=0, max_value=59, value=datetime.now().minute)
+    selected_minute = st.number_input("Minutes", min_value=0, max_value=59, value=datetime.now().minute)
 
 todate = f"{selected_date.strftime('%Y-%m-%d')}T{int(selected_hour):02d}:{int(selected_minute):02d}"
 
 # ---------------------------------
 # Preselected
 # ---------------------------------
-preselected = st.radio("Preselected", ["0", "1"], format_func=lambda x: "Inaktiv" if x == "0" else "Aktiv")
+preselected = st.radio("Preselected", ["0", "1"], format_func=lambda x: "Inactive" if x == "0" else "Active")
 
 # ---------------------------------
 # URL generieren
