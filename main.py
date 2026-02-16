@@ -96,6 +96,11 @@ todate = f"{selected_date.strftime('%Y-%m-%d')}T{int(selected_hour):02d}:{int(se
 preselected = st.radio("Preselected", ["0", "1"], format_func=lambda x: "Inactive" if x == "0" else "Active")
 
 # ---------------------------------
+# URL Shortener Optimization
+# ---------------------------------
+url_shortener_opt = st.checkbox("URL Shortener optimization", value=False)
+
+# ---------------------------------
 # URL generieren
 # ---------------------------------
 if st.button("Generate URL"):
@@ -104,11 +109,17 @@ if st.button("Generate URL"):
         st.error("Please fill in all required fields.")
     else:
 
+        # ---------------------------------
+        # Target URL relativ machen
+        # ---------------------------------
         parsed_target = urlparse(target_url)
         relative_url = parsed_target.path or "/"
         if parsed_target.query:
             relative_url += "?" + parsed_target.query
 
+        # ---------------------------------
+        # Parameter vorbereiten
+        # ---------------------------------
         params = {
             "parea_push": "true",
             "title": title.strip(),
@@ -123,29 +134,53 @@ if st.button("Generate URL"):
         if code:
             params["code"] = code.strip()
 
-        query = urlencode(params, quote_via=quote)
+        # ---------------------------------
+        # Encoding abhängig von Checkbox
+        # ---------------------------------
+        if url_shortener_opt:
+            # Manuelle "Mini-Encoding" Logik
+            def shortener_encode(value):
+                value = str(value)
+                value = value.replace("%", "%25")
+                value = value.replace("?", "%3F")
+                value = value.replace(" ", "+")
+                return value
 
-        tracking_encoded = quote(tracking.strip(), safe="")
-        if tracking_encoded:
-            query += "&" + tracking_encoded
+            param_list = [
+                f"{key}={shortener_encode(value)}"
+                for key, value in params.items()
+            ]
 
+            new_query = "&".join(param_list)
+
+            if tracking:
+                tracking_clean = shortener_encode(tracking.strip())
+                new_query += "&" + tracking_clean
+
+        else:
+            # Standard Encoding
+            new_query = urlencode(params, quote_via=quote)
+
+            if tracking:
+                tracking_encoded = quote(tracking.strip(), safe="")
+                new_query += "&" + tracking_encoded
+
+        # ---------------------------------
+        # Bestehende Query berücksichtigen
+        # ---------------------------------
         parsed_base = urlparse(base_url)
         existing_query = parsed_base.query
-        new_query = urlencode(params, quote_via=quote)
-        tracking_encoded = quote(tracking.strip(), safe="")
-        
-        if tracking_encoded:
-            new_query += "&" + tracking_encoded
-        
+
         if existing_query:
             combined_query = existing_query + "&" + new_query
         else:
             combined_query = new_query
-        
-        # finale URL bauen
+
+        # ---------------------------------
+        # Finale URL bauen
+        # ---------------------------------
         final_url = urlunparse(parsed_base._replace(query=combined_query))
 
         st.success("URL successfully generated ✅")
         st.text_area("Final URL", final_url, height=150)
-
         st.code(final_url)
