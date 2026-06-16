@@ -96,11 +96,6 @@ todate = f"{selected_date.strftime('%Y-%m-%d')}T{int(selected_hour):02d}:{int(se
 preselected = st.radio("Preselected", ["0", "1"], format_func=lambda x: "Inactive" if x == "0" else "Active")
 
 # ---------------------------------
-# Marker Text
-# ---------------------------------
-markertext = st.text_input("Marker Text")
-
-# ---------------------------------
 # URL Shortener Optimization
 # ---------------------------------
 url_shortener_opt = st.checkbox("URL Shortener optimization", value=False)
@@ -138,8 +133,6 @@ if st.button("Generate URL"):
             params["claim"] = claim.strip()
         if code:
             params["code"] = code.strip()
-        if markertext:
-            params["markertext"] = markertext.strip()
 
         # ---------------------------------
         # Encoding abhängig von Checkbox
